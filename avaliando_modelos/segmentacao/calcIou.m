@@ -1,5 +1,5 @@
 function iou = calcIou(yi,yf,xi,xf,o_yi,o_yf,o_xi,o_xf)
-%% CÁLCULO DO IOU
+%% FUNCAO PARA REALIZAR O CALCULO DO IOU
 
 xA = max(xi, o_xi);
 yA = max(yi, o_yi);

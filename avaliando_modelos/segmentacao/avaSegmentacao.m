@@ -1,22 +1,26 @@
-%% AVALIA PERFORMANCE MODELO DE REC. DE SEGMENTAÇÃO
+% ELTON S. S.
+%% AVALIA PERFORMANCE MODELO DE RECONHECIMENTO DE SEGMENTACAO
 close all, clear, clc
 
 %% CONSTANTES
-deteccoes = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\segmentacao\deteccoes_segmentacao_testing_2.txt';
-PATH_BBOXES_ORIG = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\segmentacao\dataset_placas\testing\labels\';
-PATH_IMAGES_ORIG = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\segmentacao\dataset_placas\testing\images\';
-PATH_IMAGES_SAVE = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\segmentacao\debug\';
-PATH_IMAGES_SAVE_DEBUG = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\segmentacao\debug_iou_less_0_75\';
+% CAMINHO CONTENDO CARACTERES SEGMENTADOS
+deteccoes = '[PATH_ARQUIVO_TXT_DETECCOES]';
+% CAMINHO PARA A PASTA CONTENDO OS LABELS ORIGINAIS DE CADA IMAGEM
+PATH_BBOXES_ORIG = '[PATH_LABELS_ORIGINAIS]';
+% CAMINHO PARA A PASTA CONTENDO AS IMAGENS ORIGINAIS
+PATH_IMAGES_ORIG = '[PATH_IMAGENS_ORIGINAIS]';
+% CAMINHO PARA SALVAR AS IMAGENS CUJA A DETECÃ‡ÃƒO DO CARACTERE OBTEVE CONFIANÃ‡A MENOR DO QUE O IOU THRESHOLD
+PATH_IMAGES_SAVE_DEBUG = '[PATH_DEBUG]';
 debug = 0;
 
-%% REALIZA A EXTRAÇÃO DAS DETECÇÕES
+%% REALIZA A EXTRACAOO DAS DETECCOES
 
 fidDetec = fopen( deteccoes );
 numAcertos = 0;
 iouThreshold = 0.80;
 numberDetections = 1;
 charcounter = 0;
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 21700
     
     tline = fgetl(fidDetec);
@@ -38,8 +42,6 @@ for k = 1  : 21700
         continue
     elseif(yf>80)
         continue
-%     elseif(cf < 0.4)
-%         continue
     end
     if(yi <= 0), yi=1; end, if(xi<=0), xi=1; end
     
@@ -69,11 +71,11 @@ end
 
 fclose(fidDetec);
 
-%% REORGANIZA RESULTADOS, PLOTA E VERIFICA A QUANTIDADE DE ACERTOS DO MODELO DE SEGMENTAÇÃO
+%% REORGANIZA RESULTADOS, PLOTA E VERIFICA A QUANTIDADE DE ACERTOS DO MODELO DE SEGMENTACAO
 
 files_img = dir([PATH_IMAGES_ORIG, '*.png']);
 
-for k = 490 : 1440
+for k = 1 : 1440
     imFilename = files_img(k).name;
     imgOr = imread( [PATH_IMAGES_ORIG , imFilename] );
     imgDetec = imgOr;
@@ -120,7 +122,7 @@ for k = 490 : 1440
                     sumAcertosChar = sumAcertosChar + 1;
                 end
                 
-                % PLOTANDO A BOUNDING BOX OBTIDA VIA DETECÇÃO
+                % PLOTANDO A BOUNDING BOX OBTIDA VIA DETECCAO
                 imgDetec(yi:yi+1, xi:xf, 1) = 255;
                 imgDetec(yi:yi+1, xi:xf, 2) = 0;
                 imgDetec(yi:yi+1, xi:xf, 3) = 0;
@@ -144,92 +146,6 @@ for k = 490 : 1440
         imwrite(imgDetec, [PATH_IMAGES_SAVE_DEBUG, 'detec_',imFilename])
     end
     fclose(fid_lbl_orig);
-%     imwrite(imgDetec, [PATH_IMAGES_SAVE, 'detec_',imFilename])
 end
 
 numAcertos = numAcertos/1440 * 100
-
-
-%% LIXO
-
-
-        
-        %         nameFileTxt = [ nameFile(2 : length(nameFile) - 4), '.txt' ];
-        %         fid_lbl_orig = fopen( [PATH_BBOXES_ORIG nameFileTxt] );
-        %         if(fid_lbl_orig ~= -1)
-        %             tline = fgetl(fid_lbl_orig);
-        %             line_split = split(tline);
-        %             o_x_center = round(str2double(line_split{2,1}) * 1056);
-        %             o_y_center = round(str2double(line_split{3,1}) * 1056);
-        %             o_w = round(str2double(line_split{4,1}) * 1056);
-        %             o_h = round(str2double(line_split{5,1}) * 1056);
-        %
-        %             o_xi = round(o_x_center - o_w/2);
-        %             o_xf = round(o_x_center + o_w/2);
-        %             o_yi = round(o_y_center - o_h/2);
-        %             o_yf = round(o_y_center + o_h/2);
-        %             fclose(fid_lbl_orig);
-        %
-        %             if(o_yi <= 0), o_yi=1; end, if(o_yf > 1056), o_yf=1056; end, if(o_xi<=0), o_xi=1; end, if(o_xf>1056), o_xf=1056; end
-        %
-       
-	   
-	   
-        %             if(iou >= iouThreshold)
-        %                 numAcertos = numAcertos + 1;
-        %             end
-        %
-        %             numImgsComPlacas = numImgsComPlacas + 1;
-        %
-        %             nameFile = nameFile(2:length(nameFile));
-        %
-        %             if(debug == 1 && iou >= iouThreshold)
-        %                 imgOr = imread([PATH_IMAGES_ORIG nameFile]);
-        %                 imgDetec = imgOr;
-        %
-        %                 placa_seg = imgOr(yi:yf, xi:xf, :);
-        %                 placa_segmentada= imresize(placa_seg, [80, 240]);
-        %                 placa_segmentada(81:256, 241:256, :) = 0;
-        %                 imwrite(placa_segmentada, [PATH_PLACAS_SEGMENTADAS nameFile])
-        %
-        %                 % PLOTANDO A BOUNDING BOX OBTIDA VIA DETECÇÃO
-        % %                 imgDetec(yi:yi+2, xi:xf, 1) = 255;
-        % %                 imgDetec(yi:yi+2, xi:xf, 2) = 0;
-        % %                 imgDetec(yi:yi+2, xi:xf, 3) = 0;
-        % %                 imgDetec(yf-2:yf, xi:xf, 1) = 255;
-        % %                 imgDetec(yf-2:yf, xi:xf, 2) = 0;
-        % %                 imgDetec(yf-2:yf, xi:xf, 3) = 0;
-        % %
-        % %                 imgDetec(yi:yf, xi:xi+2, 1) = 255;
-        % %                 imgDetec(yi:yf, xi:xi+2, 2) = 0;
-        % %                 imgDetec(yi:yf, xi:xi+2, 3) = 0;
-        % %                 imgDetec(yi:yf, xf-2:xf, 1) = 255;
-        % %                 imgDetec(yi:yf, xf-2:xf, 2) = 0;
-        % %                 imgDetec(yi:yf, xf-2:xf, 3) = 0;
-        %
-        % %                 imwrite(imgDetec, [PATH_IMAGES_SAVE, 'detec_',nameFile])
-        %
-        %                 % PLOTANDO A BOUNDING BOX ORIGINAL
-        % %                 imgOrBB = imgOr;
-        % %
-        % %                 imgOrBB(o_yi:o_yi+2, o_xi:o_xf, 1) = 0;
-        % %                 imgOrBB(o_yi:o_yi+2, o_xi:o_xf, 2) = 255;
-        % %                 imgOrBB(o_yi:o_yi+2, o_xi:o_xf, 3) = 0;
-        % %                 imgOrBB(o_yf-2:o_yf, o_xi:o_xf, 1) = 0;
-        % %                 imgOrBB(o_yf-2:o_yf, o_xi:o_xf, 2) = 255;
-        % %                 imgOrBB(o_yf-2:o_yf, o_xi:o_xf, 3) = 0;
-        % %
-        % %                 imgOrBB(o_yi:o_yf, o_xi:o_xi+2, 1) = 0;
-        % %                 imgOrBB(o_yi:o_yf, o_xi:o_xi+2, 2) = 255;
-        % %                 imgOrBB(o_yi:o_yf, o_xi:o_xi+2, 3) = 0;
-        % %                 imgOrBB(o_yi:o_yf, o_xf-2:o_xf, 1) = 0;
-        % %                 imgOrBB(o_yi:o_yf, o_xf-2:o_xf, 2) = 255;
-        % %                 imgOrBB(o_yi:o_yf, o_xf-2:o_xf, 3) = 0;
-        %
-        % %                 imwrite(imgOrBB, [PATH_IMAGES_SAVE, 'orig_',nameFile])
-        %
-        %             end
-        %
-        %         end
-        %     else
-        %         numImgsSemPlacas = numImgsSemPlacas + 1;
