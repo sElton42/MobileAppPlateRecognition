@@ -1,27 +1,32 @@
-%% AVALIA PERFORMANCE MODELO DE REC. DE PLACAS
+% ELTON S. S.
+%% SCRIPT PARA AVALIAR A PERFORMANCE DO MODELO DE RECONHECIMENTO DE PLACAS
 close all, clear, clc
 
 %%
-deteccoes = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\placas\deteccoes_placas_testing.txt';
-PATH_BBOXES_ORIG = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\placa\dataset\testing\labels\';
-PATH_IMAGES_ORIG = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\placa\dataset\testing\images\';
-PATH_IMAGES_SAVE = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\placas\debug_iou_less_0_75\';
-PATH_PLACAS_SEG = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\placas_segmentadas_151123\testing\images\';
+% CAMINHO PARA ACESSAR ARQUIVO TXT CONTENDO AS DETECCOES REALIZADAS PELO YOLO NO FORMATO: 
+% [NUMERO DA IMAGEM, NOME DO ARQUIVO.PNG, YI, YF, XI, XF, CF]
+deteccoes = '[PATH_DETECCOES]';
+% CAMINHO PARA A PASTA CONTENDO OS LABELS ORIGINAIS DE CADA IMAGEM
+PATH_BBOXES_ORIG = '[PATH_LABELS_ORIGINAIS]';
+% CAMINHO PARA A PASTA CONTENDO AS IMAGENS ORIGINAIS
+PATH_IMAGES_ORIG = '[PATH_IMAGENS_ORIGINAIS]';
+% CAMINHO PARA SALVAR AS IMAGENS CUJA A DETECÃ‡ÃƒO DA PLACA OBTEVE CONFIANÃ‡A MENOR DO QUE O IOU THRESHOLD
+PATH_IMAGES_SAVE = '[PATH_DEBUG]';
+% CAMINHO PARA SALVAR AS PLACAS SEGMENTADAS
+PATH_PLACAS_SEG = '[PATH_PLACAS_SEGMENTADAS]';
+
 debug = 1;
 
-%% LÊ ARQUIVO DE DETECÇÃO E CALCULA IOU
+%% LE ARQUIVO CONTENDO DETECCOES E CALCULA IOU
 
 fidDetec = fopen( deteccoes );
 numAcertos = 0;
 numImgsComPlacas = 0;
 numImgsSemPlacas = 0;
-iouThreshold = 0.95;
+iouThreshold = 0.75;
+
 for k = 1  : 1440
-%     if(k~=1)
-%         for j = 1 : k-1
-%             tline = fgetl(fidDetec);
-%         end
-%     end
+    % PEGA AS INFORMAÃ‡Ã•ES DO TXT
     tline = fgetl(fidDetec);
     line_split = split(tline);
     
@@ -51,7 +56,7 @@ for k = 1  : 1440
             
             if(o_yi <= 0), o_yi=1; end, if(o_yf > 1056), o_yf=1056; end, if(o_xi<=0), o_xi=1; end, if(o_xf>1056), o_xf=1056; end
             
-            %% CÁLCULO DO IOU
+            %% CALCULO DO IOU
             
             xA = max(xi, o_xi);
             yA = max(yi, o_yi);
@@ -71,17 +76,15 @@ for k = 1  : 1440
             numImgsComPlacas = numImgsComPlacas + 1;
             
             nameFile = nameFile(2:length(nameFile));
-%             if(debug == 1 && iou < iouThreshold)
-            if(debug == 1)
+            if(debug == 1 && iou < iouThreshold)
                 imgOr = imread([PATH_IMAGES_ORIG nameFile]);
                 imgDetec = imgOr;
                 imgPlate = imgOr(yi:yf, xi:xf, 1:3);
                 imgPlate = imresize(imgPlate, [80, 240]);
                 imgPlate(241:256, 81:256, 1:3) = 0;
-%                 imshow(imgPlate)
                 imwrite(imgPlate, [PATH_PLACAS_SEG, 'detec_',nameFile]);
                 
-                % PLOTANDO A BOUNDING BOX OBTIDA VIA DETECÇÃO
+                % PLOTANDO A BOUNDING BOX OBTIDA
                 imgDetec(yi:yi+2, xi:xf, 1) = 255;
                 imgDetec(yi:yi+2, xi:xf, 2) = 0;
                 imgDetec(yi:yi+2, xi:xf, 3) = 0;
@@ -96,7 +99,7 @@ for k = 1  : 1440
                 imgDetec(yi:yf, xf-2:xf, 2) = 0;
                 imgDetec(yi:yf, xf-2:xf, 3) = 0;
                 
-%                 imwrite(imgDetec, [PATH_IMAGES_SAVE, 'detec_',nameFile])
+                imwrite(imgDetec, [PATH_IMAGES_SAVE, 'detec_',nameFile])
                 
                 % PLOTANDO A BOUNDING BOX ORIGINAL
                 imgOrBB = imgOr;
@@ -115,7 +118,7 @@ for k = 1  : 1440
                 imgOrBB(o_yi:o_yf, o_xf-2:o_xf, 2) = 255;
                 imgOrBB(o_yi:o_yf, o_xf-2:o_xf, 3) = 0;
                 
-%                 imwrite(imgOrBB, [PATH_IMAGES_SAVE, 'orig_',nameFile])
+                imwrite(imgOrBB, [PATH_IMAGES_SAVE, 'orig_',nameFile])
                 
             end
             
