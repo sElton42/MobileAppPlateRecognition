@@ -1,13 +1,14 @@
-%% AVALIA PERFORMANCE GERAL REC DE CARACTERES
+% ELTON S. S.
+%% AVALIA PERFORMANCE GERAL DO SISTEMA
 close all, clear, clc
 
-%% CONSTANTES E VARIÁVEIS AUXILIARES
-deteccoes_letters = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\resultados_avageral_letters.txt';
-deteccoes_numbers = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\resultados_avageral_numbers.txt';
-filename_letters = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\dataset_chars_segmentados\filename_letters_avageral.txt';
-filename_numbers = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\dataset_chars_segmentados\filename_numbers_avageral.txt';
+%% CONSTANTES E VARIAVEIS AUXILIARES
+deteccoes_letters = '[PATH_ARQUIVO_TXT_DETECCOES_LETRAS]';
+deteccoes_numbers = '[PATH_ARQUIVO_TXT_DETECCOES_LETRAS]';
+filename_letters = '[PATH_ARQUIVO_TXT_COM_NOMES_DOS_ARQUIVOS_DAS_IMAGENS_DAS_LETRAS]';
+filename_numbers = '[PATH_ARQUIVO_TXT_COM_NOMES_DOS_ARQUIVOS_DAS_IMAGENS_DOS_NUMEROS]';
 
-PATH_LABELS_ORIGINAIS = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\dataset\Original\testing\labels_original\';
+PATH_LABELS_ORIGINAIS = '[PATH_PASTA_LABELS_ORIGINAIS]';
 files = dir([PATH_LABELS_ORIGINAIS, '*.txt']);
 N = length(files);
 
@@ -15,11 +16,11 @@ debug = 0;
 numAcertos = 0;
 numAcertosLetters = 0;
 numAcertosNumbers = 0;
-%% REALIZA A EXTRAÇÃO DAS IDENTIFICAÇÕES
+%% REALIZA A EXTRACAO DAS IDENTIFICACOES
 
 fidDetec = fopen( deteccoes_letters );
 
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 3756
     tline = fgetl(fidDetec);
     tline = erase(erase(tline, "["), "]");
@@ -84,11 +85,11 @@ end
 
 fclose(fidDetec);
 
-%% LEITURA DOS NÚMEROS IDENTIFICADOS
+%% LEITURA DOS NUMEROS IDENTIFICADOS
 
 fidDetec = fopen( deteccoes_numbers );
 
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  :  5008
     tline = fgetl(fidDetec);
     tline = erase(erase(tline, "["), "]");
@@ -98,11 +99,11 @@ end
 
 fclose(fidDetec);
 
-%% MARCAÇÃO NOME DOS ARQUIVOS
+%% MARCACAO NOME DOS ARQUIVOS
 
 fidLetters = fopen( filename_letters );
 
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 3756
     tline = fgetl(fidDetec);
     resultados_letters{k, 2} = tline;
@@ -112,7 +113,7 @@ fclose(fidLetters);
 
 fidNumbers = fopen( filename_numbers );
 
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 5008
     tline = fgetl(fidDetec);
     resultados_numbers{k, 2} = tline;
@@ -120,7 +121,7 @@ end
 
 fclose(fidNumbers);
 
-%% JUNTA DETECÇÕES
+%% JUNTA DETECCOES
 
 for k = 1 : 1252
     placa{k,1} = [resultados_letters{k, 1}, resultados_letters{k+1252, 1}, resultados_letters{k+(1252*2), 1}];
@@ -135,7 +136,7 @@ for k = 1 : 1252
     placa{k,3} = [placa{k,1},'-', placa{k,2}];
 end
 
-%% AVALIAÇÃO
+%% AVALIACAO
 
 for k = 1 : 1252
     filename = placa{k,4};

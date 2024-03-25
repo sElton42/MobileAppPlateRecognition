@@ -1,17 +1,18 @@
-%% AVALIA PERFORMANCE MODELO DE REC. DE SEGMENTAÇÃO
+% ELTON S. S.
+%% RECORTA CARACTERES OBTIDO APÃ“S SEGMENTAR AS PLACAS OBTIDAS PELO MODELO DE RECONHECIMENTO DE PLACAS
 close all, clear, clc
 
 %% CONSTANTES
-deteccoes = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\deteccoes_model_aval_geral.txt';
-PATH_IMAGES_SAVE = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\dataset_chars_segmentados\images\';
-PATH_IMAGES_READ = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\geral\dataset_placas_segmentadas\placas_segmentadas_151123\testing\images\';
+deteccoes = '[PATH_CHARS_OBTIDOS]'; % FORMATO: [NUMERO_IMAGEM, NUMERO_CHAR, NOME_IMAGEM, YI, YF, XI, XF, CF]
+PATH_IMAGES_SAVE = '[PATH_CHARS_SALVOS]';
+PATH_IMAGES_READ = '[PATH_PLACAS_SEGMENTADAS]';
 
-%% REALIZA A EXTRAÇÃO DAS DETECÇÕES
+%% REALIZA A EXTRACAO DAS DETECCOES
 
 fidDetec = fopen( deteccoes );
 numberDetections = 1;
 charcounter = 0;
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 19541
     
     tline = fgetl(fidDetec);
@@ -33,8 +34,6 @@ for k = 1  : 19541
         continue
     elseif(yf>80)
         continue
-        %     elseif(cf < 0.4)
-        %         continue
     end
     if(yi <= 0), yi=1; end, if(xi<=0), xi=1; end
     

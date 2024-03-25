@@ -1,11 +1,12 @@
-%% AVALIA PERFORMANCE MODELO DE REC. DE CARACTERES
+% ELTON S. S.
+%% AVALIA PERFORMANCE MODELO DE RECONHECIMENTO DE CARACTERES
 close all, clear, clc
 
-%% CONSTANTES E VARIÁVEIS AUXILIARES
-deteccoes_letters = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\caracteres\resultados_121123_letters.txt';
-deteccoes_numbers = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\avaModelos\caracteres\resultados_121123_numbers.txt';
+%% CONSTANTES E VARIAVEIS AUXILIARES
+deteccoes_letters = '[DETECCOES DE LETRAS]';
+deteccoes_numbers = '[DETECCOES DE NUMEROS]';
 
-PATH_LABELS_ORIGINAIS = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\dataset\Original\testing\labels_original\';
+PATH_LABELS_ORIGINAIS = '[PATH_LABELS_ORIGINAIS]';
 files = dir([PATH_LABELS_ORIGINAIS, '*.txt']);
 N = length(files);
 
@@ -13,11 +14,11 @@ debug = 0;
 numAcertos = 0;
 numAcertosLetters = 0;
 numAcertosNumbers = 0;
-%% REALIZA A EXTRAÇÃO DAS IDENTIFICAÇÕES
+%% REALIZA A EXTRACAO DAS IDENTIFICACOES
 
 fidDetec = fopen( deteccoes_letters );
 
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 4320
     tline = fgetl(fidDetec);
     tline = erase(erase(tline, "["), "]");
@@ -86,11 +87,11 @@ for k = 1 : 1440
     placa{k,1} = [resultados_letters{k, 1}, resultados_letters{k+1440, 1}, resultados_letters{k+2880, 1}];
 end
 
-%% LEITURA DOS NÚMEROS IDENTIFICADOS
+%% LEITURA DOS NUMEROS IDENTIFICADOS
 
 fidDetec = fopen( deteccoes_numbers );
 
-% LÊ ARQUIVO DE TEXTO E COLETA RESULTADOS
+% LE ARQUIVO DE TEXTO E COLETA RESULTADOS
 for k = 1  : 5760
     tline = fgetl(fidDetec);
     tline = erase(erase(tline, "["), "]");
@@ -119,7 +120,7 @@ for k = 1 : 1800
     linha_dividida = split(tipo_veic);
     tipo_veic = linha_dividida{3};
     tipo_veic = convertCharsToStrings(tipo_veic);
-    % pula p/ próxima iteração se não for carro
+    % pula p/ proxima iteracao se nao for carro
     if(tipo_veic ~= 'car')
         fclose(fid);
         continue
@@ -148,42 +149,3 @@ end
 numAcertos / 1440 * 100
 numAcertosLetters / 1440 * 100
 numAcertosNumbers / 1440 * 100
-
-%%
-
-linha = 1;
-placa_deteccoes = [];
-aux = 1;
-for k = 1 : (1440*4)
-    placa_deteccoes = [placa_deteccoes, placa{linha,2}(aux)];
-    aux = aux + 1;
-    if(aux > 4)
-        aux = 1;
-        linha = linha + 1;
-    end
-end
-%%
-linha = 1;
-placa_chars_orig = [];
-aux = 5;
-for k = 1 : (1440*4)
-    placa_chars_orig = [placa_chars_orig, placa_original{linha,1}(aux)];
-    aux = aux + 1;
-    if(aux > 8)
-        aux = 5;
-        linha = linha + 1;
-    end
-end
-
-%%
-
-placa_deteccoes = placa_deteccoes';
-placa_chars_orig = placa_chars_orig';
-
-% [C, Order] = confusionmat(placa_chars_orig, placa_deteccoes, 'Order', {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'} );
-[C, Order] = confusionmat(placa_chars_orig, placa_deteccoes, 'Order', {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'} );
-confusionchart(C, Order)
-
-% title('Confusion Matrix', 'FontSize', 16);
-% xlabel('Predicted Class', 'FontSize', 14);
-% ylabel('True Class', 'FontSize', 14);
