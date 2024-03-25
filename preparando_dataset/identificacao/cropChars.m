@@ -1,18 +1,19 @@
-%% CROP CARACTERES APENAS PARA CARROS
+% ELTON S. S.
+%% RECORTA IMAGENS DOS CARACTERES
 
 close all, clear, clc
-%%
-caminho_rd_lbl = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\dataset\Original\testing\labels_original\';
-caminho_img_rd = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\dataset\Original\testing\images_original\';
-caminho_img_wr = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\identificacao_caracteres\dataset\numbers\testing\images\';
-caminho_lbl_wr = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\identificacao_caracteres\dataset\numbers\testing\labels\';
+%% Constantes:
+caminho_rd_lbl = '[PATH_LEITURA_LABELS_ORIGINAIS]';
+caminho_lbl_wr = '[PATH_ESCRITA_LABELS_PROCESSADOS]';
+caminho_img_rd = '[PATH_LEITURA_IMAGENS_ORIGINAIS]';
+caminho_img_wr = '[PATH_ESCRITA_IMAGENS_PROCESSADAS]';
 
 files = dir([caminho_rd_lbl, '*.txt']);
 N = length(files);
 ext = '.png';
 
 for i = 1 : N
-    %% abre arquivo e pega a linha com a posição da placa
+    %% abre arquivo e pega a linha com a posicao da placa
     filename = files(i).name;
     fid = fopen([caminho_rd_lbl, filename]);
     
@@ -20,7 +21,7 @@ for i = 1 : N
     linha_dividida = split(tipo_veic);
     tipo_veic = linha_dividida{3};
     tipo_veic = convertCharsToStrings(tipo_veic);
-    % pula p/ próxima iteração se não for carro
+    % pula p/ proxima iteracao se nao for carro
     if(tipo_veic ~= 'car')
         fclose(fid);
         continue
@@ -35,26 +36,25 @@ for i = 1 : N
     
     fgetl(fid); fgetl(fid); fgetl(fid);
     for j = 1 : 4
-        %% coleta x, y, w, h da linha de texto contendo a posição do caractere
+        %% coleta x, y, w, h da linha de texto contendo a posicao do caractere
         
         tline = fgetl(fid);
         linha_dividida = split(tline);
         x = linha_dividida{4}; y = linha_dividida{5}; w = linha_dividida{6}; h = linha_dividida{7};
         x = str2num(x); y = str2num(y); w = str2num(w); h = str2num(h);
         
-        %% salva imagem após cropar o caractere
+        %% salva imagem apos cropar o caractere
         
         filename_img = [filename(1:13), ext];
         I = imread( [caminho_img_rd , filename_img] );
         I2 = imcrop( I, [x, y, w, h] );
-        %imshow(I2)
         
         auxsaveimg = [caminho_img_wr, 'L', num2str(j+3), '_', filename_img];
         auxsaveimg = convertCharsToStrings(auxsaveimg);
         imwrite(I2, auxsaveimg);
         
         %% prepara e salva o label do char
-        
+        % DESCOMENTAR ESTA PARTE E REMOVER + 4 PARA FAZER PARA OS CARACTERES
         c = placa_chars(1,j+4);
 %         switch c
 %             case 'A'

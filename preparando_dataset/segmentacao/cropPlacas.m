@@ -1,22 +1,23 @@
-%% CROP PLACAS APENAS PARA CARROS
+% ELTON S. S.
+%% RECORTA IMAGENS DAS PLACAS
 
 close all, clear, clc
 
-%% pega todos os arquivos txt do diretório
+% constantes:
+caminho_rd_lbl = '[PATH_LEITURA_LABELS_ORIGINAIS]';
+caminho_lbl_wr = '[PATH_ESCRITA_LABELS]';
 
-caminho_rd_lbl = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\dataset\Original\validation\labels_original\';
-caminho_img_rd = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\dataset\Original\validation\images_original\';
-caminho_img_wr = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\validation\dataset_placas\testing\images\';
-caminho_lbl_wr = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\validation\dataset_placas\testing\labels\';
+caminho_img_rd = '[PATH_LEITURA_IMAGENS_ORIGINAIS]';
+caminho_img_wr = '[PATH_ESCRITA_PLACAS]';
 
-caminho_img_wr_debug = 'C:\Users\elton\Downloads\Estudos\Faculdade\TCC\TCC2\Desenvolvimento\DetecPlaca\matlab\codigos\validation\dataset_debug\testing\images\';
+caminho_img_wr_debug = '[PATH_ESCRITA_IMAGENS_DEBUG]';
 
 files = dir([caminho_rd_lbl, '*.txt']);
 N = length(files);
 ext = '.png';
 
 for i = 1 : N
-    %% abre arquivo e pega a linha com a posição da placa
+    %% abre arquivo e pega a linha com a posicao da placa
     filename = files(i).name;
     fid = fopen([caminho_rd_lbl, filename]);
     
@@ -24,7 +25,7 @@ for i = 1 : N
     linha_dividida = split(tipo_veic);
     tipo_veic = linha_dividida{3};
     tipo_veic = convertCharsToStrings(tipo_veic);
-    % pula p/ próxima iteração se não for carro
+    % pula p/ proxima iteracao se nao for carro
     if(tipo_veic ~= 'car')
         fclose(fid);
         continue
@@ -33,13 +34,13 @@ for i = 1 : N
     fgetl(fid); fgetl(fid); fgetl(fid); fgetl(fid);
     tline = fgetl(fid);
     
-    %% coleta x, y, w, h da linha de texto contendo a posição da placa
+    %% coleta x, y, w, h da linha de texto contendo a posicao da placa
     
     linha_dividida = split(tline);
     x = linha_dividida{2}; y = linha_dividida{3}; w = linha_dividida{4}; h = linha_dividida{5};
     x = str2num(x); y = str2num(y); w = str2num(w); h = str2num(h);
     
-    %% salva imagem após cropar a placa
+    %% salva imagem apos cropar a placa
     filename_img = [filename(1:13), ext];
     I = imread( [caminho_img_rd , filename_img] );
     I2 = imcrop( I, [x, y, w, h] );
@@ -73,7 +74,6 @@ for i = 1 : N
         
         % DEBUG    
         I4( c(k,2) : c(k,4), c(k,1) : c(k,3) , 1) = 0;
-        %imshow(I4)
         
         % CONVERTE P/ FORMATO DO YOLO
         cYolo(k,1) = ( c(k,1) + c(k,3) ) / 2 / 256; % xcenter
