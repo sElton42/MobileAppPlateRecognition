@@ -12,6 +12,6 @@ Aplicação desenvolvida para a plataforma Android, capaz de analisar imagens co
 
 - avaliando_modelos: os arquivos relativos à análise das performances obtidas pelo modelos estão neste diretório. Assim como o diretório anterior, os códigos foram separados por modelo e por abordagem.
 
-- aplicacao_android: este diretório contém os arquivos pertinentes ao desenvolvimento da aplicação android, como os arquivos xml utilizados para organizar e estilizar os elementos pertinentes à interface gráfica, as imagens utilizadas, dentre outros arquivos.
+- aplicacao_android: este diretório contém os arquivos pertinentes ao desenvolvimento da aplicação android, como os arquivos xml utilizados para organizar e estilizar os elementos pertinentes à interface gráfica, as imagens utilizadas, dentre outros arquivos. Obs.: Esta pasta é o projeto construído no Android Studio, podendo ser aberta por esta aplicação para navegar entre os códigos desenvolvidos.
 
 Autor: Elton Soares Silva

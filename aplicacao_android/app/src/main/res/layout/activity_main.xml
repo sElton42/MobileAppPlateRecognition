@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    tools:context=".MainActivity">
+
+    <!--  BACKGROUND DO LOGO  -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/background_logo"
+        android:id="@+id/backgroundLogo"
+        />
+
+    <!--  LOGO  -->
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:id="@+id/logo"
+        android:background="@drawable/logo_app"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp"
+        />
+
+    <!--  Texto inicial / Imagem Obtida:  -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:text="Forneça uma Imagem contendo uma placa veicular para que a aplicação idenfique-a."
+        android:textAlignment="center"
+        android:layout_below="@id/backgroundLogo"
+        android:fontFamily="@font/robotomedium"
+        android:id="@+id/textView1"
+        />
+
+    <!--  FOTO  -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/imageView"
+        android:layout_below="@id/textView1"
+        />
+
+    <!--  PLACA SEGMENTADA  -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/imageView2"
+        android:layout_below="@id/imageView"
+        />
+
+    <!--  Placa identificada: ABC-1234  -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:text=""
+        android:textAlignment="center"
+        android:layout_below="@id/imageView2"
+        android:fontFamily="@font/robotomedium"
+        android:id="@+id/textViewResult"
+        />
+
+    <!--  Situação Veicular  -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:text=""
+        android:textAlignment="center"
+        android:layout_below="@id/textViewResult"
+        android:fontFamily="@font/robotomedium"
+        android:id="@+id/textViewSituacao"
+        />
+
+    <Button
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Adicionar Foto da Galeria"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:textAllCaps="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20sp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/robotobold"
+        android:id="@+id/buttonGallery"
+        />
+
+    <Button
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Tirar Foto"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:textAllCaps="false"
+        android:layout_above="@id/buttonGallery"
+        android:layout_marginBottom="15sp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/robotobold"
+        android:id="@+id/buttonCamera"
+        />
+
+</RelativeLayout>
