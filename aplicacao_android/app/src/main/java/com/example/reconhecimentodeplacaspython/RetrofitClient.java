@@ -15,24 +15,4 @@ public class RetrofitClient {
         }
         return retrofit;
     }
-
-//    try {
-//        Response<PlacaModel> response = call.execute();
-//        PlacaModel placa = response.body();
-//        Log.d("PLACA_RES", ""+placa);
-//        situacaoPlaca.setText(placa.getSituacao());
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//    }
-
-//    public RetrofitClient() {
-//        this.retrofit = new Retrofit.Builder()
-//                .baseUrl(BASE_URL)
-//                .addConverterFactory(JacksonConverterFactory.create())
-//                .build();
-//    }
-
-//    public PlacaModel getPlacaService() {
-//        return this.retrofit.create(PlacaModel.class);
-//    }
 }
