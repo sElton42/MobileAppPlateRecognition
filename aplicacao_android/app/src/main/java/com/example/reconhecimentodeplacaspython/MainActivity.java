@@ -1,7 +1,6 @@
 package com.example.reconhecimentodeplacaspython;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,15 +35,10 @@ import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     TextView situacaoPlaca;
     TextView initialText;
     OutputStream outputStream;
-    public String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         initialText.setText("Imagem Obtida:");
         Long tempo_placas = System.currentTimeMillis();
 
-
         try {
             BestFp16Yolov5nPlaca model = BestFp16Yolov5nPlaca.newInstance(getApplicationContext());
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 1088, 1088, 3}, DataType.FLOAT32);
@@ -138,13 +130,6 @@ public class MainActivity extends AppCompatActivity {
             float[] saidaBuffer = outputFeature0.getFloatArray();
             tempo_placas = ( System.currentTimeMillis() - tempo_placas);
             Log.d("SAIDA_APP_TEMPO_DECORRIDO_PLACAS", ""+tempo_placas);
-//            Log.d("SAIDA_APP", "---------------- INICIANDO SALVANDO SAÍDA DO MODELO ----------------");
-//            String s;
-//            for(int i = 0; i < saidaBuffer.length; i++) {
-//                s = String.valueOf(saidaBuffer[i]);
-//                writeFile(s, getApplicationContext());
-//            }
-//            Log.d("SAIDA_APP", "---------------- FIM ----------------");
 
             // PEGA DETECÇÃO COM A MAIOR CONFIANÇA
             float[] confidencesPlate = new float[saidaBuffer.length];
@@ -176,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
             int width = Math.round(1088*saidaBuffer[maxPosConf-2]);
             int height = Math.round(1088*saidaBuffer[maxPosConf-1]);
             float confidences = saidaBuffer[maxPosConf];
-            int xi = xCenter - Math.round(width/2); // +3
-            int xf = xCenter + Math.round(width/2); // -5
+            int xi = xCenter - Math.round(width/2);
+            int xf = xCenter + Math.round(width/2);
             int yi = yCenter - Math.round(height/2);
-            int yf = yCenter + Math.round(height/2); // -4
+            int yf = yCenter + Math.round(height/2);
 
             Log.d("SAIDA_APP", "POSIÇÃO DA PLACA: yi: "+yi+" yf: "+yf+" xi: "+xi+" xf: "+xf+" confidences: "+confidences);
 
@@ -206,22 +191,6 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imgOrNoPad = Bitmap.createBitmap(image, 0,0, 1080, 1080);
             imageView.setImageBitmap(imgOrNoPad);
 
-            // TESTES DO BYTE BUFFER
-//            Bitmap bitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), image.getConfig());
-//            byteBuffer.rewind();
-//            int [] pixels = new int[image.getWidth() * image.getHeight()];
-//            for(int i = 0; i < image.getWidth() * image.getHeight(); i++) {
-//                int a = 0xFF;
-//                float r = byteBuffer.getFloat() * 255.0f;
-//                float g = byteBuffer.getFloat() * 255.0f;
-//                float b = byteBuffer.getFloat() * 255.0f;
-//
-//                pixels[i] = a << 24 | ((int) r << 16) | ((int) g << 8) | (int) b;
-//            }
-//            bitmap.setPixels(pixels, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-//            imageView.setImageBitmap(bitmap);
-            // FIM TESTE
-
             imageView2.setImageBitmap(imagePlacaCrop);
             runYoloSegmentacao(imagePlacaPad, imgOrNoPad);
             model.close();
@@ -229,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
     public String runYoloSegmentacao(Bitmap image, Bitmap OrigImage) {
         Long tempo_segmentacao = System.currentTimeMillis();
         try {
@@ -264,9 +232,6 @@ public class MainActivity extends AppCompatActivity {
             final PyObject pyobj = py.getModule("script");
             PyObject obj = pyobj.callAttr("main", saidaBuffer); // PEGA A SAÍDA DO SCRIPT
 
-            // CARACT = SAÍDA NA FORMA DE LISTA | GET(X) PEGA A BBOX DE UM CHAR
-            // GET(X) NOVAMENTE PEGA UM DOS ELEMENTOS DA BBOX
-
             List<PyObject> caracteres = obj.asList();
             String placa_resultado = "";
             Long tempo_caracteres_total = System.currentTimeMillis();
@@ -296,14 +261,12 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap charCrop = Bitmap.createBitmap(image, bxi, byi, bxf-bxi, byf-byi);
                     Bitmap charCropPad = redimenImage(charCrop);
                     charCropPad  = Bitmap.createScaledBitmap(charCropPad, 20, 30, false);
-//                    saveImage(charCropPad);
                     char letra = runCnnLetras(charCropPad);
                     placa_resultado = placa_resultado + letra;
                 } else {
                     Bitmap charCrop = Bitmap.createBitmap(image, bxi, byi, bxf-bxi, byf-byi);
                     Bitmap charCropPad = redimenImage(charCrop);
                     charCropPad = Bitmap.createScaledBitmap(charCropPad, 20, 30, false);
-//                    saveImage(charCropPad);
                     char numel = runCnnNums(charCropPad);
                     placa_resultado = placa_resultado + numel;
                 }
@@ -320,8 +283,8 @@ public class MainActivity extends AppCompatActivity {
             result.setText("Placa Identificada: "+ placa_resultado);
             model.close();
 
-            String textoPlaca = placa_resultado;
-
+//          IMPLEMENTAÇÃO DA BIBLIOTECA RETROFIT PARA OBTER A SITUAÇÃO DA PLACA VEICULAR
+//            String textoPlaca = placa_resultado;
 //            Methods methods = RetrofitClient.getRetrofitInstance().create(Methods.class);
 //            Call<PlacaModel> call = methods.buscarSituacao(placa_resultado);
 //            call.enqueue(new Callback<PlacaModel>() {
@@ -342,14 +305,8 @@ public class MainActivity extends AppCompatActivity {
 
             return placa_resultado;
 
-//            String s;
-//            for(int i = 0; i < saidaBuffer.length; i++) {
-//                s = String.valueOf(saidaBuffer[i]);
-//                writeFile(s, getApplicationContext());
-//            }
-
-            // Releases model resources if no longer used.
         } catch (IOException e) {
+
         }
         return "";
     }
@@ -373,8 +330,6 @@ public class MainActivity extends AppCompatActivity {
                     byteBuffer.putFloat((val & 0xFF) * (1.f / 255));
                 }
             }
-
-            // TODO VERIFICAR IMPLEMENTAÇÃO DAS CNNs VIA PYTHON OU CNN MAIS COMPLEXA
 
             inputFeature0.loadBuffer(byteBuffer);
 
@@ -439,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
         return numelFail;
     }
 
-    // FUNÇÃO QUE RODA O QUE ACONTECE QUANDO CLICA EM PEGAR IMAGEM DA GALERIA OU DA CÂMERA
+    // FUNÇÃO ACIONADA APOS CLICAR EM PEGAR IMAGEM DA GALERIA OU DA CAMERA
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == RESULT_OK){
@@ -463,13 +418,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Bitmap imgBitmap = Bitmap.createBitmap(1088, 1088, image.getConfig());
 
-                // GERA A IMAGEM 1088X1088
                 Canvas canvas = new Canvas(imgBitmap);
                 canvas.drawColor(Color.BLACK);
                 canvas.drawBitmap(image, 0, 0, null);
-
-//                image = Bitmap.createScaledBitmap(image, 1088, 1088, false);
-//                imageView.setImageBitmap(image);
 
                 Long tempo = System.currentTimeMillis();
                 runYoloPlacas(imgBitmap);
@@ -497,72 +448,45 @@ public class MainActivity extends AppCompatActivity {
         return max;
     }
 
-    public void writeFile(String text, Context context) {
-        String fileName = "/saida_modelo.txt";
-        // CRIANDO O ARQUIVO
-        File file = new File(context.getExternalFilesDir(null), fileName);
-
-        if(!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            FileOutputStream fos = new FileOutputStream(file, true);
-            OutputStreamWriter write = new OutputStreamWriter(fos);
-            write.append("\r\n");
-            write.append(text);
-            write.close();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    // ALTERADO P/ SALVAR COM HORA + CHARS DA PLACA
-    private void saveImage(Bitmap image, String charsPlaca, String situacaoPlaca) {
-        File dir = new File(Environment.getExternalStorageDirectory(), "Pictures");
-        if(!dir.exists()) {
-            dir.mkdir();
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
-        String currentDateAndTime = sdf.format(new Date());
-        String regularidade;
-
-//        File file = new File(dir, System.currentTimeMillis()+"_"+charsPlaca+"_"+".jpg");
-
-        if(situacaoPlaca.equals("Sem restrição")){
-            regularidade = "regular";
-        } else {
-            regularidade = "irregular";
-        }
-
-        File file = new File(dir, currentDateAndTime+"_"+charsPlaca+"_"+regularidade+".jpg");
-
-        try {
-            outputStream = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        Log.d("SALVARIMAGEM", "IMAGEM FOI SALVA COM SUCESSO");
-        try {
-            outputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // ALTERADO P/ SALVAR COM HORA + CHARS DA PLACA.
+    // USADO SOMENTE COM A BIBLIOTECA RETROFIT
+//    private void saveImage(Bitmap image, String charsPlaca, String situacaoPlaca) {
+//        File dir = new File(Environment.getExternalStorageDirectory(), "Pictures");
+//        if(!dir.exists()) {
+//            dir.mkdir();
+//        }
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
+//        String currentDateAndTime = sdf.format(new Date());
+//        String regularidade;
+//
+////        File file = new File(dir, System.currentTimeMillis()+"_"+charsPlaca+"_"+".jpg");
+//
+//        if(situacaoPlaca.equals("Sem restrição")){
+//            regularidade = "regular";
+//        } else {
+//            regularidade = "irregular";
+//        }
+//
+//        File file = new File(dir, currentDateAndTime+"_"+charsPlaca+"_"+regularidade+".jpg");
+//
+//        try {
+//            outputStream = new FileOutputStream(file);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+//        Log.d("SALVARIMAGEM", "IMAGEM FOI SALVA COM SUCESSO");
+//        try {
+//            outputStream.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            outputStream.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public Bitmap redimenImage(Bitmap image) {
         int old_image_height = image.getHeight();
