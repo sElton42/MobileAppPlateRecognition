@@ -14,6 +14,8 @@ Aplicação desenvolvida para a plataforma Android, capaz de analisar imagens co
 
 - <b>aplicacao_android:</b> este diretório contém os arquivos pertinentes ao desenvolvimento da aplicação android, como os arquivos xml utilizados para organizar e estilizar os elementos pertinentes à interface gráfica, as imagens utilizadas, dentre outros arquivos. Obs.: Esta pasta é o projeto construído no Android Studio, podendo ser aberta por esta aplicação para navegar entre os códigos desenvolvidos.
 
+- <b>treinamento:</b> contém os arquivos utilizados para montar e treinar os modelos.
+
 <b>Interface Gráfica:</b>
 <div align="center"><img src="./app-front.png" /></div>
 
